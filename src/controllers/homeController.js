@@ -8,10 +8,10 @@ let getHomePage = async (req, res) => {
         return res.render('homepage.ejs', {
             data: JSON.stringify(data)
         });
-    } catch(e) {
+    } catch (e) {
         console.log(e);
     }
-    
+
 }
 let getAboutPage = (req, res) => {
     return res.render('test/about.ejs')
@@ -34,7 +34,7 @@ let displayCRUD = async (req, res) => {
     })
 }
 
-let getEditCRUD = async (req, res) =>{
+let getEditCRUD = async (req, res) => {
     let userId = req.query.id;
     console.log(userId);
     if (userId) {
@@ -43,17 +43,30 @@ let getEditCRUD = async (req, res) =>{
         return res.render('editCRUD.ejs', {
             user: userData
         });
-        return res.send('hello from edit pagfe');
     }
     else {
         return res.send('Not Found User Id');
     }
 }
 
-let putCRUD = async(req, res) => {
+let putCRUD = async (req, res) => {
     let data = req.body;
-    await CRUDService.updateUserData(data);
-    return res.send('update done')
+    let allUsers = await CRUDService.updateUserData(data);
+    return res.render('displayCRUD.ejs', {
+        dataTable: allUsers
+    })
+}
+
+let deleteCRUD = async (req, res) => {
+    let id = req.query.id;
+    if (id) {
+        await CRUDService.deleteUserById(id);
+        return res.send('Delete the user succeed');
+    } else {
+        return res.send('User not found!')
+    }
+
+
 }
 
 module.exports = {
@@ -64,4 +77,5 @@ module.exports = {
     displayCRUD: displayCRUD,
     getEditCRUD: getEditCRUD,
     putCRUD: putCRUD,
+    deleteCRUD: deleteCRUD,
 }

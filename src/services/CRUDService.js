@@ -15,9 +15,7 @@ let createNewUser = async (data) => {
                 address: data.address,
                 phoneNumber: data.phoneNumber,
                 gender: data.gender === '1' ? true : false,
-                // image: DataTypes.STRING,
                 roleId: data.roleId,
-                // positionId: DataTypes.STRING,
             })
             resolve('ok nhes baby');
         } catch (e) {
@@ -85,18 +83,11 @@ let updateUserData = (data) => {
                 user.address = data.address;
 
                 await user.save();
-                resolve();
+                let allUsers = await db.User.findAll();
+                resolve(allUsers);
             } else {
                 resolve();
             }
-            await db.User.update(
-                data.updateValues,  
-                {
-                    where: {
-                        id: data.id
-                    }  
-                },
-            );
             resolve();
         } catch(e) {
             reject(e);
@@ -104,10 +95,28 @@ let updateUserData = (data) => {
     });
 };
 
+let deleteUserById = (userId) => {
+    return new Promise (async(resolve, reject) => {
+        try {
+            let user = await db.User.findOne({
+                where: {id: userId}
+            })
+
+            if (user) {
+                await user.destroy();
+            }
+            resolve();
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 
 module.exports = {
     createNewUser: createNewUser,
     getAllUser: getAllUser,
     getUserInfoById: getUserInfoById,
     updateUserData: updateUserData,
+    deleteUserById: deleteUserById
 }
